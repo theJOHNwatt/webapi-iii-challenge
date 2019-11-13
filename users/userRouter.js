@@ -4,44 +4,37 @@ const db = require('./userDb.js')
 const postDB = require('../posts/postDb.js')
 const router = express.Router();
 
-// TODO DONE
-// * POST new user
+
 router.post('/', validateUser, (req, res) => {
-     const newUser = req.body
-     db.insert(newUser)
-     .then(user => {
-          res.status(200).json(user)
-     })
-     .catch(error => {
-          res.status(500).json({message: "New user failed to post"})
-     })
+    const newUser = req.body
+    db.insert(newUser)
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(error => {
+        res.status(500).json({message: "New user failed to post"})
+    })
 });
 
-// TODO DONE
-// * POST new post according to user ID
 router.post('/:id/posts', validatePost, (req, res) => {
-     const id = req.params.id
-     const newPost = {...req.body, user_id:id}
-
-     db.getById(id)
-     .then(user => {
-          if(user){
-               postDB.insert(newPost)
-               .then(newPost => {
-                    res.status(200).json(newPost)
-               })
-               .catch(error => res.status(500).json({message: "New post failed to post"}))
-          } else {
-               res.status(404).json({message: "User with id was not found"})
-          }
-     })
-     .catch(error => {
-          res.status(500).json({message: "New post failed to post"})
-     })
+    const id = req.params.id
+    const newPost = {...req.body, user_id:id}
+    db.getById(id)
+    .then(user => {
+        if(user){
+            postDB.insert(newPost)
+            .then(newPost => {
+                res.status(200).json(newPost)
+            })
+            .catch(error => res.status(500).json({message: "New post failed to post"}))
+        } else {
+            res.status(404).json({message: "User with id was not found"})
+        }
+    })
+    .catch(error => {
+        res.status(500).json({message: "New post failed to post"})
+    })
 });
-
-
-
 
 router.get('/', (req, res) => {
     const query = req.query
@@ -54,8 +47,6 @@ router.get('/', (req, res) => {
     })
 });
 
-
-
 router.get('/:id', validateUserId, (req, res) => {    
     db.getById(req.params.id)
     .then(user => {
@@ -65,8 +56,6 @@ router.get('/:id', validateUserId, (req, res) => {
         res.status(500).json({message: "User could not be retrieved"})
     })
 });
-
-
 
 router.get('/:id/posts', validateUserId, (req, res) => {
     db.getUserPosts(req.params.id)
@@ -78,8 +67,6 @@ router.get('/:id/posts', validateUserId, (req, res) => {
     })
 });
 
-
-
 router.delete('/:id', validateUserId, (req, res) => {
     const id = req.params.id 
     db.remove(id)
@@ -90,9 +77,6 @@ router.delete('/:id', validateUserId, (req, res) => {
         res.status(500).json({message: "User was unsuccessfully deleted"})
     })
 });
-
-
-
 
 router.put('/:id', validateUserId, (req, res) => {
     const id = req.params.id
